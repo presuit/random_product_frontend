@@ -33,7 +33,7 @@ export const LogIn = () => {
 
     if (ok && token) {
       alert("로그인 성공!");
-      localStorage.setItem("token", token);
+      localStorage.setItem("random_product_auth_token", token);
       window.location.reload();
     }
   };

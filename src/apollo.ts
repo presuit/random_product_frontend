@@ -23,7 +23,7 @@ export interface newMsgManagerProps {
   newMsg: number;
 }
 
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("random_product_auth_token");
 export const isLoggedIn = makeVar(Boolean(token));
 export const authToken = makeVar(token);
 export const currentHomePage = makeVar(1);

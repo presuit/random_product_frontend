@@ -29,7 +29,8 @@
     "web-vitals": "^1.1.0"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=development react-scripts start",
+    "start:dev": "cross-env NODE_ENV=development npm run start",
+    "start": "react-scripts start",
     "prebuild": "npm run tailwind:prod",
     "build": "react-scripts build",
     "test": "react-scripts test",
