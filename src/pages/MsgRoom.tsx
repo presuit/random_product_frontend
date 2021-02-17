@@ -3,14 +3,10 @@ import { faPaperPlane, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { newMsgManager } from "../apollo";
 import { BackButton } from "../components/BackButton";
 import { MsgBlock } from "../components/msgBlock";
-import {
-  BASE_BACKEND_HTTPS_URL,
-  BASE_LOCAL_BACKEND_HTTP_URL,
-} from "../constants";
 import { MSG_ROOM_FRAGMENT } from "../fragment";
 import { useMe } from "../hooks/useMe";
 import { createMsg, createMsgVariables } from "../__generated__/createMsg";
@@ -61,6 +57,7 @@ interface IFormProps {
 
 export const MsgRoom = () => {
   const { pathname } = useLocation();
+  const history = useHistory();
   const { id } = useParams<IParams>();
   const { data: userData } = useMe();
   const _newMsgManager = useReactiveVar(newMsgManager);
@@ -121,7 +118,14 @@ export const MsgRoom = () => {
   };
 
   useEffect(() => {
+    // 해당 메시지룸에 관련된 유저가 아니면 퇴출
+    if (msgRoomData?.findMsgRoomById.error) {
+      alert(msgRoomData?.findMsgRoomById.error);
+      history.goBack();
+    }
+
     window.scrollTo(0, document.body.scrollHeight);
+
     if (pathname !== `/messages/${id}`) {
       return;
     }
