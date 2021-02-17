@@ -6,7 +6,6 @@ import { LoggedOutRouter } from "./components/LoggedOutRouter";
 import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
-  console.log(process.env.NODE_ENV);
   const isLoggedInVar = useReactiveVar<boolean>(isLoggedIn);
   return (
     <Router>{isLoggedInVar ? <LoggedInRouter /> : <LoggedOutRouter />}</Router>

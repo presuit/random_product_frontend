@@ -1,9 +1,38 @@
+import { gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
+import { requestEmail } from "../__generated__/requestEmail";
+
+const REQUEST_EMAIL_MUTATION = gql`
+  mutation requestEmail {
+    requestEmail {
+      ok
+      error
+    }
+  }
+`;
 
 export const NotValidUser = () => {
   const history = useHistory();
+
+  const onCompleted = (data: requestEmail) => {
+    const {
+      requestEmail: { ok, error },
+    } = data;
+    if (ok === true) {
+      alert("이메일 전송에 성공했습니다. 이메일을 확인해 주세요!");
+    } else {
+      alert(error);
+    }
+  };
+
+  const [requestEmailMutation, { error }] = useMutation<requestEmail>(
+    REQUEST_EMAIL_MUTATION,
+    {
+      onCompleted,
+    }
+  );
   const { data } = useMe();
 
   const onClickToResetToken = () => {
@@ -12,12 +41,20 @@ export const NotValidUser = () => {
     window.location.reload();
   };
 
+  const onClickToRequestEmail = () => {
+    return requestEmailMutation();
+  };
+
   useEffect(() => {
     if (data?.me.user?.isVerified && data?.me.user?.isVerified === true) {
       history.push("/");
       window.location.reload();
     }
   }, [data]);
+
+  if (error) {
+    alert(error);
+  }
 
   return (
     <div>
@@ -35,6 +72,12 @@ export const NotValidUser = () => {
               className="py-5 hover:bg-indigo-500 transition-colors  focus:outline-none "
             >
               이전 페이지로 돌아가기
+            </button>
+            <button
+              onClick={onClickToRequestEmail}
+              className="py-5 hover:bg-indigo-500 transition-colors  focus:outline-none "
+            >
+              이메일 다시 보내기
             </button>
           </div>
         </div>
