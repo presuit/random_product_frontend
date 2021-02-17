@@ -89,10 +89,6 @@ export interface LogInInput {
   password: string;
 }
 
-export interface RequestNewVerificationInput {
-  userId: number;
-}
-
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
