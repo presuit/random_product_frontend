@@ -229,6 +229,10 @@ export const Product = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    refetch({ productId: +id });
+  }, []);
+
   if (loading) {
     return <LoadingSpinner />;
   }
