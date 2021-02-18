@@ -10,6 +10,7 @@ import { BackButton } from "../components/BackButton";
 import { MsgBlock } from "../components/msgBlock";
 import { MSG_ROOM_FRAGMENT } from "../fragment";
 import { useMe } from "../hooks/useMe";
+import { validateAuth } from "../utils";
 import { createMsg, createMsgVariables } from "../__generated__/createMsg";
 import {
   findMsgRoomById,
@@ -145,28 +146,29 @@ export const MsgRoom = () => {
 
   useEffect(() => {
     (async () => {
-      return refetchMsgRoom({ input: { id: +id } });
+      await validateAuth();
+      await refetchMsgRoom({ input: { id: +id } });
+      subscribeToMore({
+        document: RECEIVE_MSG_ROOM_SUBSCRIPTION,
+        variables: { msgRoomId: +id },
+        updateQuery: (
+          prev,
+          {
+            subscriptionData: { data },
+          }: { subscriptionData: { data: receiveMsgRoom } }
+        ) => {
+          if (!data) {
+            return prev;
+          }
+          return {
+            findMsgRoomById: {
+              ...prev.findMsgRoomById,
+              msgRoom: { ...data.receiveMsgRoom },
+            },
+          };
+        },
+      });
     })();
-    subscribeToMore({
-      document: RECEIVE_MSG_ROOM_SUBSCRIPTION,
-      variables: { msgRoomId: +id },
-      updateQuery: (
-        prev,
-        {
-          subscriptionData: { data },
-        }: { subscriptionData: { data: receiveMsgRoom } }
-      ) => {
-        if (!data) {
-          return prev;
-        }
-        return {
-          findMsgRoomById: {
-            ...prev.findMsgRoomById,
-            msgRoom: { ...data.receiveMsgRoom },
-          },
-        };
-      },
-    });
   }, []);
 
   return (

@@ -1,9 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { ProductGridItem } from "../components/ProductGridItem";
+import { validateAuth } from "../utils";
 import {
   findCategoryBySlug,
   findCategoryBySlugVariables,
@@ -48,11 +50,13 @@ export const Category = () => {
     fetchPolicy: "network-only",
   });
 
+  useEffect(() => {
+    validateAuth();
+  }, []);
+
   if (loading) {
     return <LoadingSpinner />;
   }
-
-  console.log(data);
   return (
     <div>
       <Helmet>

@@ -7,7 +7,7 @@ import {
   findProductByIdVariables,
 } from "../__generated__/findProductById";
 import { LoadingSpinner } from "../components/LoadingSpinner";
-import { getNameSuppressed, numberWithCommas } from "../utils";
+import { getNameSuppressed, numberWithCommas, validateAuth } from "../utils";
 import { joinRoom, joinRoomVariables } from "../__generated__/joinRoom";
 import { useMe } from "../hooks/useMe";
 import { PointPercent } from "../__generated__/globalTypes";
@@ -215,12 +215,6 @@ export const Product = () => {
   };
 
   useEffect(() => {
-    if (!userLoading && userData?.me.user?.isVerified === false) {
-      history.push("/not-valid-user");
-    }
-  }, [userData]);
-
-  useEffect(() => {
     if (data?.findProductById.product?.description) {
       if (descriptionContainer.current) {
         descriptionContainer.current.innerHTML =
@@ -230,7 +224,10 @@ export const Product = () => {
   }, [data]);
 
   useEffect(() => {
-    refetch({ productId: +id });
+    (async () => {
+      await validateAuth();
+      await refetch({ productId: +id });
+    })();
   }, []);
 
   if (loading) {

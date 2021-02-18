@@ -10,6 +10,7 @@ import {
 import { Menu } from "../components/Menu";
 import { currentHomePage } from "../apollo";
 import { Helmet } from "react-helmet-async";
+import { validateAuth } from "../utils";
 
 const ALL_PRODUCTS_QUERY = gql`
   query allProducts($input: AllProductsInput!) {
@@ -47,11 +48,12 @@ export const Home = () => {
     },
   });
   useEffect(() => {
-    refetch({ input: { page } });
+    (async () => {
+      await refetch({ input: { page } });
+      validateAuth();
+    })();
   }, []);
-  if (!userLoading && userData?.me.user?.isVerified === false) {
-    history.push("/not-valid-user");
-  }
+
   return (
     <div>
       <Helmet>

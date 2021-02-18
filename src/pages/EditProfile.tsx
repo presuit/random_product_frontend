@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
 import { useMe } from "../hooks/useMe";
+import { validateAuth } from "../utils";
 import {
   editProfile,
   editProfileVariables,
@@ -146,6 +147,12 @@ export const EditProfile = () => {
       setValue("username", userData?.me.user?.username);
     }
   }, [userData]);
+
+  useEffect(() => {
+    (async () => {
+      await validateAuth();
+    })();
+  }, []);
 
   return (
     <div>

@@ -6,6 +6,7 @@ import { newMsgManager } from "../apollo";
 import { Menu } from "../components/Menu";
 import { MsgRoomStick } from "../components/MsgRoomStick";
 import { useMe } from "../hooks/useMe";
+import { validateAuth } from "../utils";
 import { allMsgRooms } from "../__generated__/allMsgRooms";
 
 export const ALL_MSG_ROOMS_QUERY = gql`
@@ -47,7 +48,10 @@ export const Messages = () => {
   }, [userData]);
 
   useEffect(() => {
-    refetch();
+    (async () => {
+      await validateAuth();
+      await refetch();
+    })();
   }, []);
 
   return (

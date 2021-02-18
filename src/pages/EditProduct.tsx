@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PointPercent } from "../__generated__/globalTypes";
 import { FormError } from "../components/FormError";
-import { numberWithCommas } from "../utils";
+import { numberWithCommas, validateAuth } from "../utils";
 import { ALL_CATEGORIES_QUERY } from "./CreateProduct";
 import { PRODUCTS_FRAGMENT } from "../fragment";
 import {
@@ -148,7 +148,6 @@ export const EditProduct = () => {
 
   const setProductValueToInput = () => {
     if (productData?.findProductById.product) {
-      console.log("setProductValueToInput");
       const originalCategory =
         productData.findProductById.product.category.slug;
       const originalName = productData.findProductById.product.name;
@@ -176,18 +175,18 @@ export const EditProduct = () => {
   };
 
   useEffect(() => {
-    if (!userLoading && userData?.me.user?.isVerified === false) {
-      history.push("/not-valid-user");
-    }
-
-    if (userData?.me.user && productData?.findProductById.product) {
-      if (
-        userData?.me.user.id !== productData?.findProductById.product.seller.id
-      ) {
-        alert("접근 권한이 없습니다.");
-        history.push(`/product/${id}`);
+    (async () => {
+      await validateAuth();
+      if (userData?.me.user && productData?.findProductById.product) {
+        if (
+          userData?.me.user.id !==
+          productData?.findProductById.product.seller.id
+        ) {
+          alert("접근 권한이 없습니다.");
+          history.push(`/product/${id}`);
+        }
       }
-    }
+    })();
   }, []);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { Menu } from "../components/Menu";
 import { useMe, useMyWallet } from "../hooks/useMe";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,8 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { WalletHistory } from "../components/WalletHistory";
 import { gql, useLazyQuery, useReactiveVar } from "@apollo/client";
-import { authToken, currentMeMenu } from "../apollo";
-import { numberWithCommas } from "../utils";
+import { authToken, currentMeMenu, TOKEN_NAME } from "../apollo";
+import { numberWithCommas, validateAuth } from "../utils";
 import { SellingHistory } from "../components/SellingHistory";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import {
@@ -98,7 +98,9 @@ export const Me = () => {
 
   const onClickLogOut = () => {
     if (_authToken) {
-      localStorage.removeItem("random_product_auth_token");
+      localStorage.removeItem(TOKEN_NAME);
+      history.push("/");
+      window.location.reload();
     }
   };
 
@@ -120,18 +122,17 @@ export const Me = () => {
   }, [data]);
 
   useEffect(() => {
-    refetch();
-    refetchMe();
-    if (data?.me.user?.id) {
-      sellingProductHistoryQuery({
-        variables: { input: { userId: data?.me.user?.id } },
-      });
-    }
+    (async () => {
+      await validateAuth();
+      await refetch();
+      await refetchMe();
+      if (data?.me.user?.id) {
+        sellingProductHistoryQuery({
+          variables: { input: { userId: data?.me.user?.id } },
+        });
+      }
+    })();
   }, []);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <div>

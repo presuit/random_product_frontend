@@ -13,7 +13,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { PointPercent } from "../__generated__/globalTypes";
 import { FormError } from "../components/FormError";
-import { numberWithCommas } from "../utils";
+import { numberWithCommas, validateAuth } from "../utils";
 import { FormButton } from "../components/FormButton";
 import { BackButton } from "../components/BackButton";
 import { ImgGrid } from "../components/ImgGrid";
@@ -73,7 +73,7 @@ export const CreateProduct = () => {
       console.log(error);
     }
   };
-  const [createProductMutation, { called }] = useMutation<
+  const [createProductMutation] = useMutation<
     createProduct,
     createProductVariables
   >(CREATE_PRODUCT_MUTATION, { onCompleted });
@@ -197,12 +197,10 @@ export const CreateProduct = () => {
   };
 
   useEffect(() => {
-    if (!userLoading && userData?.me.user?.isVerified === false) {
-      history.push("/not-valid-user");
-    }
+    (async () => {
+      await validateAuth();
+    })();
   }, []);
-
-  console.log(errors);
 
   return (
     <div>

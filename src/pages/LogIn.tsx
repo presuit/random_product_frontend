@@ -5,6 +5,7 @@ import { logIn, logInVariables } from "../__generated__/logIn";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { LogInInput } from "../__generated__/globalTypes";
+import { TOKEN_NAME } from "../apollo";
 
 const LOG_IN_MUTATION = gql`
   mutation logIn($input: LogInInput!) {
@@ -31,7 +32,7 @@ export const LogIn = () => {
 
     if (ok && token) {
       alert("로그인 성공!");
-      localStorage.setItem("random_product_auth_token", token);
+      localStorage.setItem(TOKEN_NAME, token);
       window.location.reload();
     }
   };

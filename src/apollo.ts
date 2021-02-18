@@ -16,10 +16,10 @@ export interface newMsgManagerProps {
   prevMsg: number;
   newMsg: number;
 }
-
-const token = localStorage.getItem("random_product_auth_token");
-export const isLoggedIn = makeVar(Boolean(token));
-export const authToken = makeVar(token);
+export const TOKEN_NAME = "randummy_auth_token";
+const TOKEN = localStorage.getItem(TOKEN_NAME);
+export const isLoggedIn = makeVar(Boolean(TOKEN));
+export const authToken = makeVar(TOKEN);
 export const currentHomePage = makeVar(1);
 export const currentMeMenu = makeVar(MeMenus.UsernameMenu);
 export const currentUserProfileMenu = makeVar(UserProfileMenus.UsernameMenu);

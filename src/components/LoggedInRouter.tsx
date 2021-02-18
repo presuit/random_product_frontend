@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { Switch, Route, Redirect, useLocation } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Redirect,
+  useLocation,
+  useHistory,
+} from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 import { Home } from "../pages/Home";
 import { Me } from "../pages/Me";
@@ -16,8 +22,10 @@ import { EditProduct } from "../pages/EditProduct";
 import { MsgRoom } from "../pages/MsgRoom";
 import { gql, useReactiveVar, useSubscription } from "@apollo/client";
 import { receiveMsgCount } from "../__generated__/receiveMsgCount";
-import { newMsgManager } from "../apollo";
+import { newMsgManager, TOKEN_NAME } from "../apollo";
 import { Category } from "../pages/Category";
+import { AsyncLocalStorage } from "async_hooks";
+import { validateAuth } from "../utils";
 
 export const RECEIVE_MSG_COUNT = gql`
   subscription receiveMsgCount {
@@ -86,19 +94,11 @@ const routes = [
 
 export const LoggedInRouter = () => {
   const { pathname } = useLocation();
-  const { loading, error, data: userData, refetch: refetchMe } = useMe();
   const { data: receiveMsgCountData } = useSubscription<receiveMsgCount>(
     RECEIVE_MSG_COUNT
   );
   const _newMsgManager = useReactiveVar(newMsgManager);
-  const onClickToRestart = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      localStorage.removeItem("token");
-    }
-    window.location.href = "/";
-    window.location.reload();
-  };
+
   useEffect(() => {
     if (receiveMsgCountData?.receiveMsgCount) {
       const {
@@ -106,20 +106,17 @@ export const LoggedInRouter = () => {
       } = receiveMsgCountData;
 
       if (pathname === `/messages/${msgRoomId}`) {
-        console.log("나간다!!", pathname, msgRoomId);
         return;
       }
 
       const findOne = _newMsgManager.find((each) => each.id === msgRoomId);
       if (findOne) {
-        console.log("findOne! ", findOne);
         const filtered = _newMsgManager.filter((each) => each.id !== msgRoomId);
         newMsgManager([
           ...filtered,
           { ...findOne, newMsg: msgCounts - findOne.prevMsg },
         ]);
       } else {
-        console.log("_newMsgManager is empty");
         newMsgManager([
           ..._newMsgManager,
           { id: msgRoomId, prevMsg: msgCounts - 1, newMsg: 1 },
@@ -128,40 +125,9 @@ export const LoggedInRouter = () => {
     }
   }, [receiveMsgCountData]);
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    return (
-      <>
-        <div className="h-screen flex flex-col items-center justify-center  px-16">
-          <h1 className="text-5xl font-bold text-red-500">유저 에러 발생!</h1>
-          <h3 className="mt-10 text-3xl font-medium text-white">
-            유저 토큰에 문제가 생겼습니다.
-          </h3>
-          <h3 className="mt-10 text-3xl font-medium text-white">
-            다시 로그인 해주세요.
-          </h3>
-
-          <button
-            onClick={onClickToRestart}
-            className="mt-10 py-5 px-5 ring-4 ring-indigo-600  focus:outline-none rounded-lg shadow-lg text-white "
-          >
-            다시 로그인하기
-          </button>
-        </div>
-      </>
-    );
-  }
-
-  console.log(
-    "receiveMsgCountData",
-    receiveMsgCountData?.receiveMsgCount,
-    "userDAta",
-    userData?.me.user?.msgRooms
-  );
-  console.log("_newMsgManager", _newMsgManager);
+  useEffect(() => {
+    validateAuth();
+  }, []);
 
   return (
     <Switch>

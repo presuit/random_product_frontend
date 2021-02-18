@@ -14,6 +14,7 @@ import { BackButton } from "../components/BackButton";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { SellingHistory } from "../components/SellingHistory";
 import { useMe } from "../hooks/useMe";
+import { validateAuth } from "../utils";
 import {
   findUserById,
   findUserByIdVariables,
@@ -98,6 +99,17 @@ export const UserProfile = () => {
   }, [data, selected]);
 
   useEffect(() => {
+    if (data) {
+      if (!data.findUserById.ok) {
+        history.goBack();
+      }
+    }
+
+    if (error) {
+      console.log(error);
+      history.goBack();
+    }
+
     if (userData?.me.user && data?.findUserById.user) {
       if (userData?.me.user.id === data?.findUserById.user.id) {
         history.push("/me");
@@ -106,27 +118,10 @@ export const UserProfile = () => {
   }, [userData, data]);
 
   useEffect(() => {
-    if (userData?.me.user?.isVerified === false) {
-      history.push("/not-valid-user");
-    }
-  }, [userData]);
-
-  if (userLoading) {
-    <LoadingSpinner />;
-  }
-
-  if (data) {
-    if (!data.findUserById.ok) {
-      history.goBack();
-    }
-  }
-
-  if (error) {
-    console.log(error);
-    history.goBack();
-  }
-
-  console.log(menuRef);
+    (async () => {
+      await validateAuth();
+    })();
+  }, []);
 
   return (
     <div>

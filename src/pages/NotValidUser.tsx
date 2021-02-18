@@ -1,8 +1,9 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
+import { validateAuth } from "../utils";
 import { requestEmail } from "../__generated__/requestEmail";
 
 const REQUEST_EMAIL_MUTATION = gql`
@@ -28,10 +29,15 @@ export const NotValidUser = () => {
     }
   };
 
-  const [requestEmailMutation, { error }] = useMutation<requestEmail>(
+  const onError = (error: ApolloError) => {
+    alert(error);
+  };
+
+  const [requestEmailMutation] = useMutation<requestEmail>(
     REQUEST_EMAIL_MUTATION,
     {
       onCompleted,
+      onError,
     }
   );
   const { data } = useMe();
@@ -53,9 +59,9 @@ export const NotValidUser = () => {
     }
   }, [data]);
 
-  if (error) {
-    alert(error);
-  }
+  useEffect(() => {
+    validateAuth();
+  }, []);
 
   return (
     <div>
