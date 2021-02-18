@@ -1,11 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-  useLocation,
-} from "react-router-dom";
+import { Switch, Route, Redirect, useLocation } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 import { Home } from "../pages/Home";
 import { Me } from "../pages/Me";
@@ -24,10 +18,6 @@ import { gql, useReactiveVar, useSubscription } from "@apollo/client";
 import { receiveMsgCount } from "../__generated__/receiveMsgCount";
 import { newMsgManager } from "../apollo";
 import { Category } from "../pages/Category";
-import {
-  BASE_BACKEND_HTTPS_URL,
-  BASE_LOCAL_BACKEND_HTTP_URL,
-} from "../constants";
 
 export const RECEIVE_MSG_COUNT = gql`
   subscription receiveMsgCount {

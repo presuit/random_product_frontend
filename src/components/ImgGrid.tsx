@@ -8,11 +8,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import {
-  BASE_BACKEND_HTTPS_URL,
-  BASE_LOCAL_BACKEND_HTTP_URL,
-  BUCKET_NAME,
-} from "../constants";
 import { EDIT_PRODUCT_MUTATION } from "../pages/EditProduct";
 import {
   editProduct,
@@ -78,18 +73,24 @@ export const ImgGrid: React.FC<IProps> = ({
     const id = section.id.split("-")[1];
     const img = imgGrid[+id];
     const key = img.split("/")[3];
-    const data: { bucket: string; key: string } = {
-      bucket: BUCKET_NAME,
-      key,
-    };
+    let data: { bucket: string; key: string };
+    if (process.env.REACT_APP_BUCKET_NAME) {
+      data = {
+        bucket: process.env.REACT_APP_BUCKET_NAME,
+        key,
+      };
+    } else {
+      alert("환경변수 설정에 문제가 발생했습니다.");
+      return;
+    }
     const {
       data: axiosData,
     }: { data: { deleted: boolean; error?: string } } = await axios({
       method: "DELETE",
       url:
         process.env.NODE_ENV === "production"
-          ? `${BASE_BACKEND_HTTPS_URL}/uploads`
-          : `${BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
+          ? `${process.env.REACT_APP_BASE_BACKEND_HTTPS_URL}/uploads`
+          : `${process.env.REACT_APP_BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
       data,
     });
 
@@ -149,8 +150,8 @@ export const ImgGrid: React.FC<IProps> = ({
             method: "POST",
             url:
               process.env.NODE_ENV === "production"
-                ? `${BASE_BACKEND_HTTPS_URL}/uploads`
-                : `${BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
+                ? `${process.env.REACT_APP_BASE_BACKEND_HTTPS_URL}/uploads`
+                : `${process.env.REACT_APP_BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
             headers: { "Content-Type": "multipart/form-data" },
             data: formData,
           });

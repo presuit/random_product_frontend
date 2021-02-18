@@ -9,11 +9,7 @@ import {
   createProductVariables,
 } from "../__generated__/createProduct";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faPlus,
-  faArrowRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { PointPercent } from "../__generated__/globalTypes";
 import { FormError } from "../components/FormError";
@@ -22,10 +18,6 @@ import { FormButton } from "../components/FormButton";
 import { BackButton } from "../components/BackButton";
 import { ImgGrid } from "../components/ImgGrid";
 import "../styles/productDetailImg.css";
-import {
-  BASE_BACKEND_HTTPS_URL,
-  BASE_LOCAL_BACKEND_HTTP_URL,
-} from "../constants";
 
 const CREATE_PRODUCT_MUTATION = gql`
   mutation createProduct($input: CreateProductInput!) {
@@ -97,22 +89,6 @@ export const CreateProduct = () => {
     mode: "onChange",
   });
 
-  const onClickPreviewImageLeft = () => {
-    if (currentPreview === 0) {
-      setCurrentPreview(previewImage.length - 1);
-    }
-    if (currentPreview >= 1) {
-      setCurrentPreview((prev) => prev - 1);
-    }
-  };
-  const onClickPreviewImageRight = () => {
-    if (currentPreview === previewImage.length - 1) {
-      setCurrentPreview(0);
-    }
-    if (currentPreview < previewImage.length - 1) {
-      setCurrentPreview((prev) => prev + 1);
-    }
-  };
   const parsePointPercentKorToEnum = (value: string): PointPercent => {
     if (value === "가격의 100%") {
       return PointPercent.full;
@@ -155,8 +131,8 @@ export const CreateProduct = () => {
         method: "POST",
         url:
           process.env.NODE_ENV === "production"
-            ? `${BASE_BACKEND_HTTPS_URL}/uploads`
-            : `${BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
+            ? `${process.env.REACT_APP_BASE_BACKEND_HTTPS_URL}/uploads`
+            : `${process.env.REACT_APP_BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
         headers: { "Content-Type": "multipart/form-data" },
         data: formImgData,
       });

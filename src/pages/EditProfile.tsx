@@ -7,11 +7,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
-import {
-  BASE_BACKEND_HTTPS_URL,
-  BASE_LOCAL_BACKEND_HTTP_URL,
-  BUCKET_NAME,
-} from "../constants";
 import { useMe } from "../hooks/useMe";
 import {
   editProfile,
@@ -81,11 +76,16 @@ export const EditProfile = () => {
       // if previous avatar img exists then delete it from aws_s3 and update
       if (userData?.me?.user?.avatarImg) {
         const key = userData.me.user.avatarImg.split("/")[3];
-        console.log("key", key);
-        const data: { bucket: string; key: string } = {
-          bucket: BUCKET_NAME,
-          key,
-        };
+        let data: { bucket: string; key: string };
+        if (process.env.REACT_APP_BUCKET_NAME) {
+          data = {
+            bucket: process.env.REACT_APP_BUCKET_NAME,
+            key,
+          };
+        } else {
+          alert("환경 변수 설정에 문제가 발생했습니다.");
+          return;
+        }
 
         const {
           data: axiosData,
@@ -93,8 +93,8 @@ export const EditProfile = () => {
           method: "DELETE",
           url:
             process.env.NODE_ENV === "production"
-              ? `${BASE_BACKEND_HTTPS_URL}/uploads`
-              : `${BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
+              ? `${process.env.REACT_APP_BASE_BACKEND_HTTPS_URL}/uploads`
+              : `${process.env.REACT_APP_BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
           data,
         });
         if (!axiosData.deleted) {
@@ -113,8 +113,8 @@ export const EditProfile = () => {
         method: "POST",
         url:
           process.env.NODE_ENV === "production"
-            ? `${BASE_BACKEND_HTTPS_URL}/uploads`
-            : `${BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
+            ? `${process.env.REACT_APP_BASE_BACKEND_HTTPS_URL}/uploads`
+            : `${process.env.REACT_APP_BASE_LOCAL_BACKEND_HTTP_URL}/uploads`,
         headers: { "Content-Type": "multipart/form-data" },
         data: formImgData,
       });

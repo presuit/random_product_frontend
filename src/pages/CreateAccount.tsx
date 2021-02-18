@@ -2,7 +2,6 @@ import React from "react";
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
-import { isLoggedIn } from "../apollo";
 import { Helmet } from "react-helmet-async";
 import { CreateAccountInput } from "../__generated__/globalTypes";
 import {

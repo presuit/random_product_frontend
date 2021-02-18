@@ -8,9 +8,7 @@ import {
   faCheck,
   faUserCircle,
   faTimes,
-  faPlus,
   faUserTimes,
-  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import { WalletHistory } from "../components/WalletHistory";
 import { gql, useLazyQuery, useReactiveVar } from "@apollo/client";
@@ -23,7 +21,6 @@ import {
   userSellingHistoryVariables,
 } from "../__generated__/userSellingHistory";
 import { AvatarFullsize } from "../components/avatarFullsize";
-import { url } from "inspector";
 
 export enum MeMenus {
   UsernameMenu = "meUsernameMenu",

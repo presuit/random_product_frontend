@@ -5,7 +5,6 @@ import {
   faUser,
   faArrowCircleRight,
   faArrowCircleLeft,
-  faCommentDots,
   faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";

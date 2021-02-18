@@ -1,12 +1,10 @@
 import React from "react";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { logIn, logInVariables } from "../__generated__/logIn";
 import { Link } from "react-router-dom";
-import { isLoggedIn } from "../apollo";
 import { Helmet } from "react-helmet-async";
 import { LogInInput } from "../__generated__/globalTypes";
-import { data } from "autoprefixer";
 
 const LOG_IN_MUTATION = gql`
   mutation logIn($input: LogInInput!) {
