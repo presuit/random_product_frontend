@@ -50,13 +50,12 @@ interface IFormProps {
 }
 
 export const CreateProduct = () => {
+  const { refetch } = useMe();
   const descriptionDivRef = useRef<HTMLDivElement>(null);
   const [formCalled, setFormCalled] = useState(false);
   const [previewImage, setPreviewImage] = useState<string[]>([]);
   const [currentPrice, setCurrentPrice] = useState(0);
-  const [currentPreview, setCurrentPreview] = useState(0);
   const [exitImgGrid, setExitImgGrid] = useState(true);
-  const { data: userData, loading: userLoading } = useMe();
   const { data: categoriesData } = useQuery<allCategories>(
     ALL_CATEGORIES_QUERY
   );
@@ -198,7 +197,8 @@ export const CreateProduct = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetch();
+      await validateAuth(updatedUser, history);
     })();
   }, []);
 

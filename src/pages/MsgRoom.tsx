@@ -61,7 +61,7 @@ export const MsgRoom = () => {
   const { pathname } = useLocation();
   const history = useHistory();
   const { id } = useParams<IParams>();
-  const { data: userData } = useMe();
+  const { data: userData, refetch: refetchUser } = useMe();
   const _newMsgManager = useReactiveVar(newMsgManager);
 
   const { register, getValues, handleSubmit, setValue } = useForm<IFormProps>();
@@ -146,7 +146,8 @@ export const MsgRoom = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetchUser();
+      await validateAuth(updatedUser, history);
       await refetchMsgRoom({ input: { id: +id } });
       subscribeToMore({
         document: RECEIVE_MSG_ROOM_SUBSCRIPTION,

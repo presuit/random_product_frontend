@@ -40,7 +40,7 @@ export const NotValidUser = () => {
       onError,
     }
   );
-  const { data } = useMe();
+  const { data, refetch: refetchUser } = useMe();
 
   const onClickToResetToken = () => {
     localStorage.removeItem("token");
@@ -60,7 +60,10 @@ export const NotValidUser = () => {
   }, [data]);
 
   useEffect(() => {
-    validateAuth();
+    (async () => {
+      const upadtedUser = await refetchUser();
+      await validateAuth(upadtedUser, history);
+    })();
   }, []);
 
   return (

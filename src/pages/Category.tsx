@@ -1,10 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { ProductGridItem } from "../components/ProductGridItem";
+import { useMe } from "../hooks/useMe";
 import { validateAuth } from "../utils";
 import {
   findCategoryBySlug,
@@ -37,6 +38,8 @@ interface IParams {
 }
 
 export const Category = () => {
+  const history = useHistory();
+  const { refetch } = useMe();
   const { slug } = useParams<IParams>();
   const { loading, data } = useQuery<
     findCategoryBySlug,
@@ -51,7 +54,10 @@ export const Category = () => {
   });
 
   useEffect(() => {
-    validateAuth();
+    (async () => {
+      const updatedUser = await refetch();
+      await validateAuth(updatedUser, history);
+    })();
   }, []);
 
   if (loading) {

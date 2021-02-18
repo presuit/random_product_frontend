@@ -77,11 +77,7 @@ export const Product = () => {
   const questionRef = useRef<HTMLDivElement>(null);
   const [fullSizeMode, setFullSizeMode] = useState<boolean>(false);
   const { id } = useParams<IParams>();
-  const {
-    data: userData,
-    loading: userLoading,
-    refetch: refetchUser,
-  } = useMe();
+  const { data: userData, refetch: refetchUser } = useMe();
   const { loading, data, refetch } = useQuery<
     findProductById,
     findProductByIdVariables
@@ -225,7 +221,8 @@ export const Product = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetchUser();
+      await validateAuth(updatedUser, history);
       await refetch({ productId: +id });
     })();
   }, []);

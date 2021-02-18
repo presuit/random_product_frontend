@@ -62,9 +62,10 @@ interface IFormProps {
 }
 
 export const EditProduct = () => {
+  const history = useHistory();
   const { id } = useParams<IParams>();
   const descriptionDivRef = useRef<HTMLDivElement>(null);
-  const { data: userData, loading: userLoading } = useMe();
+  const { data: userData, refetch } = useMe();
   const { data: categoriesData } = useQuery<allCategories>(
     ALL_CATEGORIES_QUERY
   );
@@ -92,7 +93,6 @@ export const EditProduct = () => {
     editProductVariables
   >(EDIT_PRODUCT_MUTATION, { onCompleted });
 
-  const history = useHistory();
   const {
     register,
     getValues,
@@ -176,7 +176,8 @@ export const EditProduct = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetch();
+      await validateAuth(updatedUser, history);
       if (userData?.me.user && productData?.findProductById.product) {
         if (
           userData?.me.user.id !==

@@ -34,7 +34,11 @@ export const Home = () => {
   const history = useHistory();
   const currentPage = useReactiveVar(currentHomePage);
   const [page, setPage] = useState(currentPage);
-  const { data: userData, loading: userLoading } = useMe();
+  const {
+    data: userData,
+    loading: userLoading,
+    refetch: refetchUser,
+  } = useMe();
   const {
     data: productsData,
     loading: productsLoading,
@@ -50,7 +54,8 @@ export const Home = () => {
   useEffect(() => {
     (async () => {
       await refetch({ input: { page } });
-      validateAuth();
+      const updatedUser = await refetchUser();
+      validateAuth(updatedUser, history);
     })();
   }, []);
 

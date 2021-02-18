@@ -123,7 +123,8 @@ export const Me = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetchMe();
+      await validateAuth(updatedUser, history);
       await refetch();
       await refetchMe();
       if (data?.me.user?.id) {

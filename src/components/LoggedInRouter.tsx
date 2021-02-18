@@ -1,12 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  Switch,
-  Route,
-  Redirect,
-  useLocation,
-  useHistory,
-} from "react-router-dom";
-import { useMe } from "../hooks/useMe";
+import { useEffect } from "react";
+import { Switch, Route, Redirect, useLocation } from "react-router-dom";
 import { Home } from "../pages/Home";
 import { Me } from "../pages/Me";
 import { Messages } from "../pages/Messages";
@@ -15,17 +8,14 @@ import { ValidationCode } from "../pages/ValidateCode";
 import "../styles/animation.css";
 import { NotValidUser } from "../pages/NotValidUser";
 import { Product } from "../pages/Product";
-import { LoadingSpinner } from "./LoadingSpinner";
 import { CreateProduct } from "../pages/CreateProduct";
 import { EditProfile } from "../pages/EditProfile";
 import { EditProduct } from "../pages/EditProduct";
 import { MsgRoom } from "../pages/MsgRoom";
 import { gql, useReactiveVar, useSubscription } from "@apollo/client";
 import { receiveMsgCount } from "../__generated__/receiveMsgCount";
-import { newMsgManager, TOKEN_NAME } from "../apollo";
+import { newMsgManager } from "../apollo";
 import { Category } from "../pages/Category";
-import { AsyncLocalStorage } from "async_hooks";
-import { validateAuth } from "../utils";
 
 export const RECEIVE_MSG_COUNT = gql`
   subscription receiveMsgCount {
@@ -124,10 +114,6 @@ export const LoggedInRouter = () => {
       }
     }
   }, [receiveMsgCountData]);
-
-  useEffect(() => {
-    validateAuth();
-  }, []);
 
   return (
     <Switch>

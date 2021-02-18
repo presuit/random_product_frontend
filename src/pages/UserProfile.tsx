@@ -52,8 +52,7 @@ export enum UserProfileMenus {
 export const UserProfile = () => {
   const history = useHistory();
   const { id } = useParams<IParams>();
-  const { loading: userLoading, data: userData } = useMe();
-  const menuRef = useRef<HTMLDivElement>(null);
+  const { data: userData, refetch: refetchUser } = useMe();
   const currentMenu = useReactiveVar(currentUserProfileMenu);
   const [selected, setSelected] = useState<string>(currentMenu);
   const [fullsizeMode, setFullsizeMode] = useState(false);
@@ -119,7 +118,8 @@ export const UserProfile = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetchUser();
+      await validateAuth(updatedUser, history);
     })();
   }, []);
 

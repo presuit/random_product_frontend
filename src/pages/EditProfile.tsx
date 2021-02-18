@@ -1,7 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { data } from "autoprefixer";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -35,7 +34,7 @@ const EDIT_USER_PROFILE = gql`
 `;
 
 export const EditProfile = () => {
-  const { data: userData } = useMe();
+  const { data: userData, refetch } = useMe();
   const { register, getValues, setValue } = useForm<IFormParams>();
   const { id } = useParams<IParams>();
   const history = useHistory();
@@ -150,7 +149,8 @@ export const EditProfile = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetch();
+      await validateAuth(updatedUser, history);
     })();
   }, []);
 

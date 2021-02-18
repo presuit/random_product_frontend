@@ -30,7 +30,11 @@ export const ALL_MSG_ROOMS_QUERY = gql`
 export const Messages = () => {
   const history = useHistory();
   const _newMsgManager = useReactiveVar(newMsgManager);
-  const { loading: userLoading, data: userData } = useMe();
+  const {
+    loading: userLoading,
+    data: userData,
+    refetch: refetchUser,
+  } = useMe();
   const { data, refetch } = useQuery<allMsgRooms>(ALL_MSG_ROOMS_QUERY);
 
   const getNewMsgCount = (msgRoomId: number) => {
@@ -49,7 +53,8 @@ export const Messages = () => {
 
   useEffect(() => {
     (async () => {
-      await validateAuth();
+      const updatedUser = await refetchUser();
+      await validateAuth(updatedUser, history);
       await refetch();
     })();
   }, []);
