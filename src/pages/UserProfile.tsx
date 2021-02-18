@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router-dom";
 import { currentUserProfileMenu } from "../apollo";
 import { AvatarFullsize } from "../components/avatarFullsize";
@@ -129,6 +130,12 @@ export const UserProfile = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>
+          {data?.findUserById.user?.username || "유저 인증 정보 없음"}의 프로필
+          | 랜더미
+        </title>
+      </Helmet>
       <BackButton />
       {data?.findUserById.user && (
         <div>

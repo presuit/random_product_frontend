@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
+import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
 import { LoadingSpinner } from "../components/LoadingSpinner";
@@ -54,6 +55,9 @@ export const Category = () => {
   console.log(data);
   return (
     <div>
+      <Helmet>
+        <title>{data?.findCategoryBySlug.category?.slug} | 랜더미</title>
+      </Helmet>
       <BackButton />
       <div className="max-w-screen-2xl min-h-screen mx-10 2xl:mx-auto pt-10 pb-32 grid  md:grid-cols-4 md:auto-rows-fr   gap-5">
         {data?.findCategoryBySlug.ok &&

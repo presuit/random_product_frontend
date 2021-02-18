@@ -23,6 +23,7 @@ import { ImgGrid } from "../components/ImgGrid";
 import { BackButton } from "../components/BackButton";
 import { FormButton } from "../components/FormButton";
 import { FIND_PRODUCT_BY_ID_QUERY } from "./Product";
+import { Helmet } from "react-helmet-async";
 
 export const EDIT_PRODUCT_PRODUCT_QUERY = gql`
   query editProductProductQuery($productId: Float!) {
@@ -215,6 +216,9 @@ export const EditProduct = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>프로덕트 수정 | 랜더미</title>
+      </Helmet>
       {!exitImgGrid ? (
         <ImgGrid
           productId={+id}

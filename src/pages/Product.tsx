@@ -21,6 +21,7 @@ import {
   deleteProduct,
   deleteProductVariables,
 } from "../__generated__/deleteProduct";
+import { Helmet } from "react-helmet-async";
 
 interface IParams {
   id: string;
@@ -148,7 +149,6 @@ export const Product = () => {
       } else {
         return NaN;
       }
-      console.log(percent);
       let calcedPrice = Math.ceil(data.findProductById.product.price * percent);
       if (calcedPrice % 10 !== 0) {
         calcedPrice = (Math.floor(calcedPrice / 10) + 1) * 10;
@@ -252,6 +252,9 @@ export const Product = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{data?.findProductById.product?.name} | 랜더미</title>
+      </Helmet>
       {/* 뒤로 가기 버튼 */}
       <BackButton url={"/"} />
       {data?.findProductById.product?.detailImgs &&

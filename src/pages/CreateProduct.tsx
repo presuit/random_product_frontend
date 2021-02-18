@@ -18,6 +18,7 @@ import { FormButton } from "../components/FormButton";
 import { BackButton } from "../components/BackButton";
 import { ImgGrid } from "../components/ImgGrid";
 import "../styles/productDetailImg.css";
+import { Helmet } from "react-helmet-async";
 
 const CREATE_PRODUCT_MUTATION = gql`
   mutation createProduct($input: CreateProductInput!) {
@@ -205,6 +206,9 @@ export const CreateProduct = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>프로덕트 생성 | 랜더미</title>
+      </Helmet>
       {!exitImgGrid && (
         <ImgGrid
           useFor="CREATE"

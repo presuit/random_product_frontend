@@ -9,6 +9,7 @@ import {
 } from "../__generated__/allProducts";
 import { Menu } from "../components/Menu";
 import { currentHomePage } from "../apollo";
+import { Helmet } from "react-helmet-async";
 
 const ALL_PRODUCTS_QUERY = gql`
   query allProducts($input: AllProductsInput!) {
@@ -51,9 +52,11 @@ export const Home = () => {
   if (!userLoading && userData?.me.user?.isVerified === false) {
     history.push("/not-valid-user");
   }
-  console.log(productsData, error);
   return (
     <div>
+      <Helmet>
+        <title>홈 | 랜더미</title>
+      </Helmet>
       {!userLoading && userData?.me.user?.isVerified === true && (
         <div>
           <div className="max-w-screen-2xl min-h-screen mx-10 2xl:mx-auto pt-10 pb-32 grid  md:grid-cols-4 grid-rows-2 gap-5 ">

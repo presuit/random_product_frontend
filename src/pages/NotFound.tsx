@@ -1,9 +1,13 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
 export const NotFound = () => {
   return (
     <div>
+      <Helmet>
+        <title>서비스 되지 않는 영역입니다. | 랜더미</title>
+      </Helmet>
       <div className="w-full min-h-screen bg-indigo-400  text-white flex flex-col items-center justify-center">
         <h1 className="font-bold text-5xl mb-5">Page Not Found</h1>
         <h3 className="font-medium mb-5">

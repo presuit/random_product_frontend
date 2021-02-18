@@ -1,5 +1,6 @@
 import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router-dom";
 import { newMsgManager } from "../apollo";
 import { Menu } from "../components/Menu";
@@ -49,10 +50,11 @@ export const Messages = () => {
     refetch();
   }, []);
 
-  console.log(_newMsgManager);
-
   return (
     <div>
+      <Helmet>
+        <title>메세지들 | 랜더미</title>
+      </Helmet>
       <div className="max-w-screen-2xl min-h-screen   2xl:mx-auto ">
         <main className="pb-32 pt-10  px-5 ">
           {data?.allMsgRooms.msgRooms &&

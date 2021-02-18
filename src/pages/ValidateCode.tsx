@@ -1,5 +1,6 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import {
   confirmVerificationCode,
@@ -56,6 +57,9 @@ export const ValidationCode = () => {
   }, []);
   return (
     <div>
+      <Helmet>
+        <title>유저 인증 코드 | 랜더미</title>
+      </Helmet>
       <div className="min-h-screen flex flex-col justify-center items-center bg-indigo-500">
         {loading && (
           <h1 className="text-white font-semibold text-2xl">Loading...</h1>

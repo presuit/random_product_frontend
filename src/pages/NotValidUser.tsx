@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 import { requestEmail } from "../__generated__/requestEmail";
@@ -58,6 +59,9 @@ export const NotValidUser = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>인증 되지 않은 유저 | 랜더미</title>
+      </Helmet>
       <div className="min-h-screen flex justify-center items-center bg-indigo-500">
         <div className="max-w-screen-sm w-full mx-10 bg-white shadow-xl rounded-md py-12 px-10 sm:mx-0">
           <div className="text-center font-semibold text-2xl">

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { data } from "autoprefixer";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
@@ -148,6 +149,9 @@ export const EditProfile = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>프로필 수정 | 랜더미</title>
+      </Helmet>
       <BackButton />
       <div className="max-w-screen-lg  min-h-screen  lg:mx-auto ">
         <div>

@@ -21,6 +21,7 @@ import {
   userSellingHistoryVariables,
 } from "../__generated__/userSellingHistory";
 import { AvatarFullsize } from "../components/avatarFullsize";
+import { Helmet } from "react-helmet-async";
 
 export enum MeMenus {
   UsernameMenu = "meUsernameMenu",
@@ -136,8 +137,14 @@ export const Me = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>알 수 없는 유저 | 랜더미</title>
+      </Helmet>
       {!loading && data?.me.user && (
         <>
+          <Helmet>
+            <title>{data.me.user.username} | 랜더미</title>
+          </Helmet>
           {data.me.user.avatarImg && fullsizeMode === true && (
             <AvatarFullsize
               avatarUrl={data.me.user.avatarImg}

@@ -55,7 +55,7 @@ export const LogIn = () => {
   return (
     <div className=" min-h-screen   flex items-center justify-center">
       <Helmet>
-        <title>로그인 | front-end-practice</title>
+        <title>로그인 | 랜더미</title>
       </Helmet>
       <div className=" max-w-screen-sm  w-full  px-10 pt-10  pb-5  shadow-xl bg-white rounded-md  mx-10 ">
         <form

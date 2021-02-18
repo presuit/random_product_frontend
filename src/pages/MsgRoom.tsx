@@ -2,6 +2,7 @@ import { gql, useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { faPaperPlane, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { newMsgManager } from "../apollo";
@@ -170,6 +171,9 @@ export const MsgRoom = () => {
 
   return (
     <div className="max-w-screen-2xl min-h-screen 2xl:mx-auto ">
+      <Helmet>
+        <title>메세지룸 | 랜더미</title>
+      </Helmet>
       <BackButton url={"/messages"} />
       <div className="w-full max-w-screen-lg min-h-screen bg-indigo-700 mx-auto flex flex-col items-start pb-32">
         {msgRoomData?.findMsgRoomById?.msgRoom?.msgs?.map((eachMsg) => (

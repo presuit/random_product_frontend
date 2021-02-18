@@ -64,7 +64,7 @@ export const CreateAccount = () => {
   return (
     <div className=" min-h-screen  bg-indigo-500 flex items-center justify-center">
       <Helmet>
-        <title>회원가입 | front-end-practice</title>
+        <title>회원가입 | 랜더미</title>
       </Helmet>
       <div className=" max-w-screen-sm w-full   px-10 pt-10  pb-5  shadow-xl bg-white rounded-md  mx-10 ">
         <form
