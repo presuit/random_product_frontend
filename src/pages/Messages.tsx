@@ -3,10 +3,11 @@ import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router-dom";
 import { newMsgManager } from "../apollo";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 import { Menu } from "../components/Menu";
 import { MsgRoomStick } from "../components/MsgRoomStick";
+import { NotValidToken } from "../components/NotValidToken";
 import { useMe } from "../hooks/useMe";
-import { validateAuth } from "../utils";
 import { allMsgRooms } from "../__generated__/allMsgRooms";
 
 export const ALL_MSG_ROOMS_QUERY = gql`
@@ -34,8 +35,11 @@ export const Messages = () => {
     loading: userLoading,
     data: userData,
     refetch: refetchUser,
+    error: userError,
   } = useMe();
-  const { data, refetch } = useQuery<allMsgRooms>(ALL_MSG_ROOMS_QUERY);
+  const { data, refetch, loading: msgRoomLoading } = useQuery<allMsgRooms>(
+    ALL_MSG_ROOMS_QUERY
+  );
 
   const getNewMsgCount = (msgRoomId: number) => {
     const findOne = _newMsgManager.find((each) => each.id === msgRoomId);
@@ -52,12 +56,17 @@ export const Messages = () => {
   }, [userData]);
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetchUser();
-      await validateAuth(updatedUser, history);
-      await refetch();
-    })();
+    refetch();
+    refetchUser();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (msgRoomLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

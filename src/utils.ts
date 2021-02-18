@@ -47,19 +47,4 @@ export const numberWithCommas = (price: number) => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-export const validateAuth = async (
-  updatedUser: ApolloQueryResult<me>,
-  history: any
-) => {
-  if (updatedUser.data?.me.user?.isVerified === false) {
-    history.push("/not-valid-user");
-  }
-  if (updatedUser.loading) {
-    return LoadingSpinner;
-  }
-  if (updatedUser.error) {
-    return NotValidToken;
-  }
-};
-
 export {};

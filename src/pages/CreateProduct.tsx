@@ -13,12 +13,14 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { PointPercent } from "../__generated__/globalTypes";
 import { FormError } from "../components/FormError";
-import { numberWithCommas, validateAuth } from "../utils";
+import { numberWithCommas } from "../utils";
 import { FormButton } from "../components/FormButton";
 import { BackButton } from "../components/BackButton";
 import { ImgGrid } from "../components/ImgGrid";
 import "../styles/productDetailImg.css";
 import { Helmet } from "react-helmet-async";
+import { NotValidToken } from "../components/NotValidToken";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 const CREATE_PRODUCT_MUTATION = gql`
   mutation createProduct($input: CreateProductInput!) {
@@ -50,15 +52,16 @@ interface IFormProps {
 }
 
 export const CreateProduct = () => {
-  const { refetch } = useMe();
+  const { refetch: refetchUser, error: userError } = useMe();
   const descriptionDivRef = useRef<HTMLDivElement>(null);
   const [formCalled, setFormCalled] = useState(false);
   const [previewImage, setPreviewImage] = useState<string[]>([]);
   const [currentPrice, setCurrentPrice] = useState(0);
   const [exitImgGrid, setExitImgGrid] = useState(true);
-  const { data: categoriesData } = useQuery<allCategories>(
-    ALL_CATEGORIES_QUERY
-  );
+  const {
+    data: categoriesData,
+    loading: categoryLoading,
+  } = useQuery<allCategories>(ALL_CATEGORIES_QUERY);
   const onCompleted = (data: createProduct) => {
     const {
       createProduct: { ok, error, productId },
@@ -196,11 +199,16 @@ export const CreateProduct = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetch();
-      await validateAuth(updatedUser, history);
-    })();
+    refetchUser();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (categoryLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

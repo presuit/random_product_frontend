@@ -10,7 +10,8 @@ import {
 import { Menu } from "../components/Menu";
 import { currentHomePage } from "../apollo";
 import { Helmet } from "react-helmet-async";
-import { validateAuth } from "../utils";
+import { NotValidToken } from "../components/NotValidToken";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 const ALL_PRODUCTS_QUERY = gql`
   query allProducts($input: AllProductsInput!) {
@@ -31,19 +32,19 @@ const ALL_PRODUCTS_QUERY = gql`
 `;
 
 export const Home = () => {
-  const history = useHistory();
   const currentPage = useReactiveVar(currentHomePage);
   const [page, setPage] = useState(currentPage);
   const {
     data: userData,
     loading: userLoading,
     refetch: refetchUser,
+    error: userError,
   } = useMe();
   const {
     data: productsData,
     loading: productsLoading,
     refetch,
-    error,
+    error: allProductError,
   } = useQuery<allProducts, allProductsVariables>(ALL_PRODUCTS_QUERY, {
     variables: {
       input: {
@@ -52,12 +53,17 @@ export const Home = () => {
     },
   });
   useEffect(() => {
-    (async () => {
-      await refetch({ input: { page } });
-      const updatedUser = await refetchUser();
-      validateAuth(updatedUser, history);
-    })();
+    refetch({ input: { page } });
+    refetchUser();
   }, []);
+
+  if (userError || allProductError) {
+    return <NotValidToken />;
+  }
+
+  if (productsLoading || userLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

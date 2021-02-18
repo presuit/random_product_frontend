@@ -12,9 +12,9 @@ import { currentUserProfileMenu } from "../apollo";
 import { AvatarFullsize } from "../components/avatarFullsize";
 import { BackButton } from "../components/BackButton";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { NotValidToken } from "../components/NotValidToken";
 import { SellingHistory } from "../components/SellingHistory";
 import { useMe } from "../hooks/useMe";
-import { validateAuth } from "../utils";
 import {
   findUserById,
   findUserByIdVariables,
@@ -52,14 +52,17 @@ export enum UserProfileMenus {
 export const UserProfile = () => {
   const history = useHistory();
   const { id } = useParams<IParams>();
-  const { data: userData, refetch: refetchUser } = useMe();
+  const { data: userData, refetch: refetchUser, error: userError } = useMe();
   const currentMenu = useReactiveVar(currentUserProfileMenu);
   const [selected, setSelected] = useState<string>(currentMenu);
   const [fullsizeMode, setFullsizeMode] = useState(false);
-  const { data, error } = useQuery<findUserById, findUserByIdVariables>(
-    FIND_USER_BY_ID_QUERY,
-    { variables: { input: { userId: +id } }, fetchPolicy: "network-only" }
-  );
+  const { data, error, loading } = useQuery<
+    findUserById,
+    findUserByIdVariables
+  >(FIND_USER_BY_ID_QUERY, {
+    variables: { input: { userId: +id } },
+    fetchPolicy: "network-only",
+  });
 
   const onClickMenu = (e: any) => {
     let targetMenu = e.target;
@@ -117,11 +120,16 @@ export const UserProfile = () => {
   }, [userData, data]);
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetchUser();
-      await validateAuth(updatedUser, history);
-    })();
+    refetchUser();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

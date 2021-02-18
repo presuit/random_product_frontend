@@ -4,9 +4,9 @@ import { Helmet } from "react-helmet-async";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
 import { LoadingSpinner } from "../components/LoadingSpinner";
+import { NotValidToken } from "../components/NotValidToken";
 import { ProductGridItem } from "../components/ProductGridItem";
 import { useMe } from "../hooks/useMe";
-import { validateAuth } from "../utils";
 import {
   findCategoryBySlug,
   findCategoryBySlugVariables,
@@ -39,7 +39,7 @@ interface IParams {
 
 export const Category = () => {
   const history = useHistory();
-  const { refetch } = useMe();
+  const { refetch: refetchUser, error: userError } = useMe();
   const { slug } = useParams<IParams>();
   const { loading, data } = useQuery<
     findCategoryBySlug,
@@ -54,11 +54,12 @@ export const Category = () => {
   });
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetch();
-      await validateAuth(updatedUser, history);
-    })();
+    refetchUser();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
 
   if (loading) {
     return <LoadingSpinner />;

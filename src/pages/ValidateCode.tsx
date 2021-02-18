@@ -2,6 +2,8 @@ import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useHistory, useLocation } from "react-router-dom";
+import { NotValidToken } from "../components/NotValidToken";
+import { useMe } from "../hooks/useMe";
 import {
   confirmVerificationCode,
   confirmVerificationCodeVariables,
@@ -22,6 +24,8 @@ export const ValidationCode = () => {
   const history = useHistory();
   const client = useApolloClient();
   const code = location.search.split("?code=")[1];
+  const { data: userData, error: userError } = useMe();
+
   const onCompleted = (data: confirmVerificationCode) => {
     const {
       confirmVerificationCode: { ok, userId },
@@ -42,6 +46,7 @@ export const ValidationCode = () => {
       history.push("/");
     }
   };
+
   const [confirmVerificationCodeMutation, { loading, data }] = useMutation<
     confirmVerificationCode,
     confirmVerificationCodeVariables
@@ -55,6 +60,16 @@ export const ValidationCode = () => {
       },
     });
   }, []);
+
+  if (userData?.me.user?.isVerified === true) {
+    alert("이미 인증 된 유저입니다.");
+    history.push("/");
+  }
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
   return (
     <div>
       <Helmet>

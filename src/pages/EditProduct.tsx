@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { PointPercent } from "../__generated__/globalTypes";
 import { FormError } from "../components/FormError";
-import { numberWithCommas, validateAuth } from "../utils";
+import { numberWithCommas } from "../utils";
 import { ALL_CATEGORIES_QUERY } from "./CreateProduct";
 import { PRODUCTS_FRAGMENT } from "../fragment";
 import {
@@ -24,6 +24,8 @@ import { BackButton } from "../components/BackButton";
 import { FormButton } from "../components/FormButton";
 import { FIND_PRODUCT_BY_ID_QUERY } from "./Product";
 import { Helmet } from "react-helmet-async";
+import { NotValidToken } from "../components/NotValidToken";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 export const EDIT_PRODUCT_PRODUCT_QUERY = gql`
   query editProductProductQuery($productId: Float!) {
@@ -65,11 +67,11 @@ export const EditProduct = () => {
   const history = useHistory();
   const { id } = useParams<IParams>();
   const descriptionDivRef = useRef<HTMLDivElement>(null);
-  const { data: userData, refetch } = useMe();
+  const { data: userData, refetch: refetchUser, error: userError } = useMe();
   const { data: categoriesData } = useQuery<allCategories>(
     ALL_CATEGORIES_QUERY
   );
-  const { data: productData } = useQuery<
+  const { data: productData, loading: productLoading } = useQuery<
     editProductProductQuery,
     editProductProductQueryVariables
   >(EDIT_PRODUCT_PRODUCT_QUERY, { variables: { productId: +id } });
@@ -176,8 +178,6 @@ export const EditProduct = () => {
 
   useEffect(() => {
     (async () => {
-      const updatedUser = await refetch();
-      await validateAuth(updatedUser, history);
       if (userData?.me.user && productData?.findProductById.product) {
         if (
           userData?.me.user.id !==
@@ -188,7 +188,7 @@ export const EditProduct = () => {
         }
       }
     })();
-  }, []);
+  }, [userData, productData]);
 
   useEffect(() => {
     setProductValueToInput();
@@ -200,6 +200,18 @@ export const EditProduct = () => {
       setProductValueToInput();
     }
   }, [exitImgGrid]);
+
+  useEffect(() => {
+    refetchUser();
+  }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (productLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (productData?.findProductById.error) {
     return (

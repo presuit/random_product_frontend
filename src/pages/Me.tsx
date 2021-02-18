@@ -13,7 +13,7 @@ import {
 import { WalletHistory } from "../components/WalletHistory";
 import { gql, useLazyQuery, useReactiveVar } from "@apollo/client";
 import { authToken, currentMeMenu, TOKEN_NAME } from "../apollo";
-import { numberWithCommas, validateAuth } from "../utils";
+import { numberWithCommas } from "../utils";
 import { SellingHistory } from "../components/SellingHistory";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import {
@@ -22,6 +22,7 @@ import {
 } from "../__generated__/userSellingHistory";
 import { AvatarFullsize } from "../components/avatarFullsize";
 import { Helmet } from "react-helmet-async";
+import { NotValidToken } from "../components/NotValidToken";
 
 export enum MeMenus {
   UsernameMenu = "meUsernameMenu",
@@ -52,7 +53,7 @@ export const Me = () => {
   const currentMenu = useReactiveVar(currentMeMenu);
   const [selected, setSelected] = useState<string>(currentMenu);
   const [fullsizeMode, setFullsizeMode] = useState(false);
-  const { data, loading, refetch: refetchMe } = useMe();
+  const { data, loading, refetch: refetchMe, error: userError } = useMe();
 
   const [
     sellingProductHistoryQuery,
@@ -123,17 +124,24 @@ export const Me = () => {
 
   useEffect(() => {
     (async () => {
-      const updatedUser = await refetchMe();
-      await validateAuth(updatedUser, history);
       await refetch();
       await refetchMe();
       if (data?.me.user?.id) {
+        console.log("selling history lazy query activate!");
         sellingProductHistoryQuery({
           variables: { input: { userId: data?.me.user?.id } },
         });
       }
     })();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

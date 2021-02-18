@@ -7,7 +7,7 @@ import {
   findProductByIdVariables,
 } from "../__generated__/findProductById";
 import { LoadingSpinner } from "../components/LoadingSpinner";
-import { getNameSuppressed, numberWithCommas, validateAuth } from "../utils";
+import { getNameSuppressed, numberWithCommas } from "../utils";
 import { joinRoom, joinRoomVariables } from "../__generated__/joinRoom";
 import { useMe } from "../hooks/useMe";
 import { PointPercent } from "../__generated__/globalTypes";
@@ -22,6 +22,7 @@ import {
   deleteProductVariables,
 } from "../__generated__/deleteProduct";
 import { Helmet } from "react-helmet-async";
+import { NotValidToken } from "../components/NotValidToken";
 
 interface IParams {
   id: string;
@@ -77,7 +78,7 @@ export const Product = () => {
   const questionRef = useRef<HTMLDivElement>(null);
   const [fullSizeMode, setFullSizeMode] = useState<boolean>(false);
   const { id } = useParams<IParams>();
-  const { data: userData, refetch: refetchUser } = useMe();
+  const { data: userData, refetch: refetchUser, error: userError } = useMe();
   const { loading, data, refetch } = useQuery<
     findProductById,
     findProductByIdVariables
@@ -220,15 +221,15 @@ export const Product = () => {
   }, [data]);
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetchUser();
-      await validateAuth(updatedUser, history);
-      await refetch({ productId: +id });
-    })();
+    refetch({ productId: +id });
   }, []);
 
   if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (userError) {
+    return <NotValidToken />;
   }
 
   if (data?.findProductById.error) {

@@ -7,8 +7,9 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { NotValidToken } from "../components/NotValidToken";
 import { useMe } from "../hooks/useMe";
-import { validateAuth } from "../utils";
 import {
   editProfile,
   editProfileVariables,
@@ -34,7 +35,12 @@ const EDIT_USER_PROFILE = gql`
 `;
 
 export const EditProfile = () => {
-  const { data: userData, refetch } = useMe();
+  const {
+    data: userData,
+    refetch: refetchUser,
+    error: userError,
+    loading: userLoading,
+  } = useMe();
   const { register, getValues, setValue } = useForm<IFormParams>();
   const { id } = useParams<IParams>();
   const history = useHistory();
@@ -148,11 +154,16 @@ export const EditProfile = () => {
   }, [userData]);
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetch();
-      await validateAuth(updatedUser, history);
-    })();
+    refetchUser();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (userLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

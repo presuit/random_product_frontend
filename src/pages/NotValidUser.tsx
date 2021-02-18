@@ -2,8 +2,9 @@ import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router-dom";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { NotValidToken } from "../components/NotValidToken";
 import { useMe } from "../hooks/useMe";
-import { validateAuth } from "../utils";
 import { requestEmail } from "../__generated__/requestEmail";
 
 const REQUEST_EMAIL_MUTATION = gql`
@@ -40,7 +41,12 @@ export const NotValidUser = () => {
       onError,
     }
   );
-  const { data, refetch: refetchUser } = useMe();
+  const {
+    data,
+    refetch: refetchUser,
+    error: userError,
+    loading: userLoading,
+  } = useMe();
 
   const onClickToResetToken = () => {
     localStorage.removeItem("token");
@@ -60,11 +66,16 @@ export const NotValidUser = () => {
   }, [data]);
 
   useEffect(() => {
-    (async () => {
-      const upadtedUser = await refetchUser();
-      await validateAuth(upadtedUser, history);
-    })();
+    refetchUser();
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (userLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>

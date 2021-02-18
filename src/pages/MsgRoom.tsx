@@ -7,10 +7,11 @@ import { useForm } from "react-hook-form";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { newMsgManager } from "../apollo";
 import { BackButton } from "../components/BackButton";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 import { MsgBlock } from "../components/msgBlock";
+import { NotValidToken } from "../components/NotValidToken";
 import { MSG_ROOM_FRAGMENT } from "../fragment";
 import { useMe } from "../hooks/useMe";
-import { validateAuth } from "../utils";
 import { createMsg, createMsgVariables } from "../__generated__/createMsg";
 import {
   findMsgRoomById,
@@ -61,7 +62,7 @@ export const MsgRoom = () => {
   const { pathname } = useLocation();
   const history = useHistory();
   const { id } = useParams<IParams>();
-  const { data: userData, refetch: refetchUser } = useMe();
+  const { data: userData, refetch: refetchUser, error: userError } = useMe();
   const _newMsgManager = useReactiveVar(newMsgManager);
 
   const { register, getValues, handleSubmit, setValue } = useForm<IFormProps>();
@@ -73,6 +74,7 @@ export const MsgRoom = () => {
 
   const {
     data: msgRoomData,
+    loading: msgRoomLoading,
     refetch: refetchMsgRoom,
     subscribeToMore,
   } = useQuery<findMsgRoomById, findMsgRoomByIdVariables>(
@@ -145,32 +147,37 @@ export const MsgRoom = () => {
   }, [msgRoomData]);
 
   useEffect(() => {
-    (async () => {
-      const updatedUser = await refetchUser();
-      await validateAuth(updatedUser, history);
-      await refetchMsgRoom({ input: { id: +id } });
-      subscribeToMore({
-        document: RECEIVE_MSG_ROOM_SUBSCRIPTION,
-        variables: { msgRoomId: +id },
-        updateQuery: (
-          prev,
-          {
-            subscriptionData: { data },
-          }: { subscriptionData: { data: receiveMsgRoom } }
-        ) => {
-          if (!data) {
-            return prev;
-          }
-          return {
-            findMsgRoomById: {
-              ...prev.findMsgRoomById,
-              msgRoom: { ...data.receiveMsgRoom },
-            },
-          };
-        },
-      });
-    })();
+    refetchUser();
+    refetchMsgRoom({ input: { id: +id } });
+    subscribeToMore({
+      document: RECEIVE_MSG_ROOM_SUBSCRIPTION,
+      variables: { msgRoomId: +id },
+      updateQuery: (
+        prev,
+        {
+          subscriptionData: { data },
+        }: { subscriptionData: { data: receiveMsgRoom } }
+      ) => {
+        if (!data) {
+          return prev;
+        }
+        return {
+          findMsgRoomById: {
+            ...prev.findMsgRoomById,
+            msgRoom: { ...data.receiveMsgRoom },
+          },
+        };
+      },
+    });
   }, []);
+
+  if (userError) {
+    return <NotValidToken />;
+  }
+
+  if (msgRoomLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="max-w-screen-2xl min-h-screen 2xl:mx-auto ">
