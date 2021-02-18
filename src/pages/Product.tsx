@@ -222,6 +222,7 @@ export const Product = () => {
 
   useEffect(() => {
     refetch({ productId: +id });
+    refetchUser();
   }, []);
 
   if (loading) {
