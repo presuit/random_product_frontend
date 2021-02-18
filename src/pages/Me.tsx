@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { WalletHistory } from "../components/WalletHistory";
 import { gql, useLazyQuery, useReactiveVar } from "@apollo/client";
-import { currentMeMenu } from "../apollo";
+import { authToken, currentMeMenu } from "../apollo";
 import { numberWithCommas } from "../utils";
 import { SellingHistory } from "../components/SellingHistory";
 import { LoadingSpinner } from "../components/LoadingSpinner";
@@ -48,6 +48,7 @@ const USER_SELLING_HISTORY_QUERY = gql`
 
 export const Me = () => {
   const history = useHistory();
+  const _authToken = useReactiveVar(authToken);
   const currentMenu = useReactiveVar(currentMeMenu);
   const [selected, setSelected] = useState<string>(currentMenu);
   const [fullsizeMode, setFullsizeMode] = useState(false);
@@ -96,12 +97,9 @@ export const Me = () => {
   };
 
   const onClickLogOut = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      localStorage.removeItem("token");
+    if (_authToken) {
+      localStorage.removeItem("random_product_auth_token");
     }
-    history.push("/");
-    window.location.reload();
   };
 
   const onClickToFullsize = () => {
