@@ -256,7 +256,7 @@ export const ImgGrid: React.FC<IProps> = ({
   console.log(currentFullImg);
 
   return (
-    <div className="min-h-screen w-full bg-gray-800 z-50 ">
+    <div className="bg-gray-800 z-50 ">
       {fullsizeMode && (
         <AvatarFullsize
           avatarUrl={currentFullImg}
@@ -299,7 +299,7 @@ export const ImgGrid: React.FC<IProps> = ({
       </div>
 
       {/* grid */}
-      <main className="max-w-screen-xl min-h-screen mr-20 2xl:mx-auto grid auto-rows-fr  grid-rows-3 md:grid-cols-3 gap-5 p-5">
+      <main className="max-w-screen-xl min-h-screen mr-20 2xl:mx-auto grid  grid-rows-3 md:grid-cols-3 gap-5 p-5">
         {imgGrid &&
           imgGrid.length !== 0 &&
           imgGrid.map((eachImg, index) => (
