@@ -306,7 +306,7 @@ export const ImgGrid: React.FC<IProps> = ({
             <section
               id={`ImgGridItem-${index}`}
               key={index}
-              className=" relative rounded-xl  hover:shadow-2xl transition-shadow overflow-hidden"
+              className="relative rounded-xl w-full h-44  hover:shadow-2xl transition-shadow overflow-hidden"
             >
               <div
                 onClick={onClickToFullSize}
